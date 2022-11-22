@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "ai4es-tutorial"
+version = "0.1.0"
+description = "AI4ES cloud & HPC tutorial"
+authors = ["Andres Garcia Mangas <andres.garcia@fundacionctic.org>"]
+readme = "README.md"
+packages = [{ include = "ai4es_tutorial" }]
+
+[tool.poetry.dependencies]
+python = ">=3.8, <3.10"
+
+[tool.poetry.group.dev.dependencies]
+black = "^22.10.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
