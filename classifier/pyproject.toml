@@ -7,7 +7,9 @@ readme = "README.md"
 packages = [{ include = "ai4es_tutorial" }]
 
 [tool.poetry.dependencies]
-python = ">=3.8, <3.10"
+python = ">=3.8, <3.11"
+tensorflow = "^2.11.0"
+coloredlogs = "^15.0.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.10.0"
