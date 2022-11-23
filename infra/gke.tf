@@ -1,5 +1,6 @@
 module "gke" {
-  source                     = "terraform-google-modules/kubernetes-engine/google/modules/private-cluster"
+  source                     = "terraform-google-modules/kubernetes-engine/google//modules/private-cluster"
+  version                    = "23.3.0"
   project_id                 = var.project_id
   name                       = "gke-cluster-determined-ai"
   region                     = var.region
@@ -17,22 +18,20 @@ module "gke" {
 
   node_pools = [
     {
-      name              = "gpu-node-pool"
-      machine_type      = "n1-standard-4"
-      accelerator_type  = "nvidia-tesla-p100"
-      accelerator_count = 1
-      node_locations    = var.zone
-      min_count         = 3
-      max_count         = 3
-      local_ssd_count   = 0
-      spot              = false
-      disk_size_gb      = 100
-      disk_type         = "pd-standard"
-      enable_gcfs       = false
-      enable_gvnic      = false
-      auto_repair       = true
-      auto_upgrade      = true
-      preemptible       = false
+      name            = "ai4es-node-pool"
+      machine_type    = "n1-standard-4"
+      node_locations  = var.zone
+      min_count       = 2
+      max_count       = 2
+      local_ssd_count = 0
+      spot            = false
+      disk_size_gb    = 100
+      disk_type       = "pd-standard"
+      enable_gcfs     = false
+      enable_gvnic    = false
+      auto_repair     = true
+      auto_upgrade    = true
+      preemptible     = false
     },
   ]
 
@@ -46,7 +45,7 @@ module "gke" {
   node_pools_labels = {
     all = {}
 
-    gpu-node-pool = {
+    ai4es-node-pool = {
       default-node-pool = true
     }
   }
@@ -54,7 +53,7 @@ module "gke" {
   node_pools_metadata = {
     all = {}
 
-    gpu-node-pool = {
+    ai4es-node-pool = {
       node-pool-metadata-custom-value = "my-node-pool"
     }
   }
@@ -62,7 +61,7 @@ module "gke" {
   node_pools_taints = {
     all = []
 
-    gpu-node-pool = [
+    ai4es-node-pool = [
       {
         key    = "default-node-pool"
         value  = true
@@ -74,7 +73,7 @@ module "gke" {
   node_pools_tags = {
     all = []
 
-    gpu-node-pool = [
+    ai4es-node-pool = [
       "default-node-pool",
     ]
   }
