@@ -10,6 +10,7 @@ packages = [{ include = "ai4es_tutorial" }]
 python = ">=3.8, <3.11"
 tensorflow = "^2.11.0"
 coloredlogs = "^15.0.1"
+determined = "^0.19.7"
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.10.0"
