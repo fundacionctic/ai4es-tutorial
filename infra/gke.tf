@@ -18,8 +18,8 @@ module "gke" {
 
   node_pools = [
     {
-      name            = "ai4es-node-pool"
-      machine_type    = "n1-standard-4"
+      name            = "default-cpu-only-pool"
+      machine_type    = "n1-standard-2"
       node_locations  = var.zone
       min_count       = 2
       max_count       = 2
@@ -33,6 +33,26 @@ module "gke" {
       auto_upgrade    = true
       preemptible     = false
     },
+    {
+      name = "gpu-enabled-pool"
+      # Free trial accounts have the quota compute.googleapis.com/gpus_all_regions set to 0
+      # Only paid accounts can request GPUs
+      accelerator_count = 0
+      accelerator_type  = "nvidia-tesla-k80"
+      machine_type      = "n1-standard-2"
+      node_locations    = var.zone
+      min_count         = 1
+      max_count         = 1
+      local_ssd_count   = 0
+      spot              = false
+      disk_size_gb      = 100
+      disk_type         = "pd-standard"
+      enable_gcfs       = false
+      enable_gvnic      = false
+      auto_repair       = true
+      auto_upgrade      = true
+      preemptible       = false
+    },
   ]
 
   node_pools_oauth_scopes = {
@@ -45,36 +65,33 @@ module "gke" {
   node_pools_labels = {
     all = {}
 
-    ai4es-node-pool = {
+    default-cpu-only-pool = {
       default-node-pool = true
     }
   }
 
   node_pools_metadata = {
     all = {}
-
-    ai4es-node-pool = {
-      node-pool-metadata-custom-value = "my-node-pool"
-    }
   }
 
   node_pools_taints = {
     all = []
-
-    ai4es-node-pool = [
-      {
-        key    = "default-node-pool"
-        value  = true
-        effect = "PREFER_NO_SCHEDULE"
-      },
-    ]
   }
 
   node_pools_tags = {
     all = []
 
-    ai4es-node-pool = [
+    default-cpu-only-pool = [
       "default-node-pool",
     ]
   }
+}
+
+data "http" "nvidia_driver_daemonset" {
+  url = "https://raw.githubusercontent.com/GoogleCloudPlatform/container-engine-accelerators/master/nvidia-driver-installer/cos/daemonset-preloaded.yaml"
+}
+
+# This will only match on nodes with GPUs
+resource "kubectl_manifest" "nvidia_driver_daemonset" {
+  yaml_body = data.http.nvidia_driver_daemonset.response_body
 }
