@@ -8,7 +8,7 @@ packages = [{ include = "ai4es_tutorial" }]
 
 [tool.poetry.dependencies]
 python = ">=3.8, <3.11"
-tensorflow = "^2.11.0"
+tensorflow = "2.9.3"
 coloredlogs = "^15.0.1"
 determined = "^0.19.7"
 
