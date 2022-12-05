@@ -11,3 +11,8 @@ variable "zone" {
   type    = string
   default = "europe-west1-b"
 }
+
+variable "determined_version" {
+  type    = string
+  default = "0.19.8"
+}

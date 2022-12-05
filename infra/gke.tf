@@ -18,9 +18,10 @@ module "gke" {
 
   node_pools = [
     {
-      name            = "default-cpu-only-pool"
-      machine_type    = "n1-standard-2"
-      node_locations  = var.zone
+      name           = "default-cpu-only-pool"
+      machine_type   = "n1-standard-4"
+      node_locations = var.zone
+      # Two n1-standard-4 instances include 8 CPUs (the max free trial quota)
       min_count       = 2
       max_count       = 2
       local_ssd_count = 0
@@ -32,27 +33,27 @@ module "gke" {
       auto_repair     = true
       auto_upgrade    = true
       preemptible     = false
-    },
-    {
-      name = "gpu-enabled-pool"
-      # Free trial accounts have the quota compute.googleapis.com/gpus_all_regions set to 0
-      # Only paid accounts can request GPUs
-      accelerator_count = 0
-      accelerator_type  = "nvidia-tesla-k80"
-      machine_type      = "n1-standard-2"
-      node_locations    = var.zone
-      min_count         = 1
-      max_count         = 1
-      local_ssd_count   = 0
-      spot              = false
-      disk_size_gb      = 100
-      disk_type         = "pd-standard"
-      enable_gcfs       = false
-      enable_gvnic      = false
-      auto_repair       = true
-      auto_upgrade      = true
-      preemptible       = false
-    },
+    }
+    # Free trial accounts have the quota compute.googleapis.com/gpus_all_regions set to 0
+    # Only paid accounts can request GPUs
+    # {
+    #   name              = "gpu-enabled-pool"
+    #   accelerator_count = 1
+    #   accelerator_type  = "nvidia-tesla-k80"
+    #   machine_type      = "n1-standard-4"
+    #   node_locations    = var.zone
+    #   min_count         = 2
+    #   max_count         = 2
+    #   local_ssd_count   = 0
+    #   spot              = false
+    #   disk_size_gb      = 100
+    #   disk_type         = "pd-standard"
+    #   enable_gcfs       = false
+    #   enable_gvnic      = false
+    #   auto_repair       = true
+    #   auto_upgrade      = true
+    #   preemptible       = false
+    # }
   ]
 
   node_pools_oauth_scopes = {
