@@ -64,6 +64,13 @@ resource "helm_release" "determined" {
 
   set {
     name  = "slotResourceRequests.cpu"
-    value = 2
+    value = 1
+  }
+
+  # https://cloud.google.com/container-optimized-os/docs/concepts/disks-and-filesystem
+
+  set {
+    name  = "checkpointStorage.hostPath"
+    value = "/home"
   }
 }
