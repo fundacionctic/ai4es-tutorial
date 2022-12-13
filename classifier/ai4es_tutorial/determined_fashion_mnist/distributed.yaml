@@ -11,4 +11,4 @@ searcher:
   smaller_is_better: false
   max_length:
     epochs: 5
-entrypoint: model_def:FashionMNISTTrial
+entrypoint: ai4es_tutorial.determined_fashion_mnist.model_def:FashionMNISTTrial
