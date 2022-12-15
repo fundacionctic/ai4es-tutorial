@@ -7,11 +7,33 @@ resource "kubernetes_namespace" "determined" {
   }
 }
 
+# https://github.com/determined-ai/determined/blob/0.19.8/helm/charts/determined/values.yaml
+
 resource "helm_release" "determined" {
   name      = "determined"
   chart     = "https://docs.determined.ai/${var.determined_version}/_downloads/389266101877e29ab82805a88a6fc4a6/determined-latest.tgz"
   version   = var.determined_version
-  namespace = kubernetes_namespace.determined.metadata[0].name
+  namespace = kubernetes_namespace.determined.id
+
+  # Configure the task container defaults. Tasks include trials, commands, TensorBoards, notebooks,
+  # and shells. For all task containers, shm_size_bytes and network_mode are configurable. For
+  # trials, the network interface used by distributed (multi-machine) training is configurable.
+
+  values = [
+    <<-EOF
+    taskContainerDefaults:
+      cpuPodSpec:
+        spec:
+          serviceAccountName: ${local.ksa_gcs_name}
+          nodeSelector:
+            iam.gke.io/gke-metadata-server-enabled: "true"
+      gpuPodSpec:
+        spec:
+          serviceAccountName: ${local.ksa_gcs_name}
+          nodeSelector:
+            iam.gke.io/gke-metadata-server-enabled: "true"
+    EOF
+  ]
 
   # Only used for Determined DB deployment. Configures the size of the PersistentVolumeClaim for the
   # Determined deployed database, as well as the CPU and memory requirements. Should be adjusted for
@@ -67,10 +89,15 @@ resource "helm_release" "determined" {
     value = 1
   }
 
-  # https://cloud.google.com/container-optimized-os/docs/concepts/disks-and-filesystem
+  # For storing in GCS.
 
   set {
-    name  = "checkpointStorage.hostPath"
-    value = "/home"
+    name  = "checkpointStorage.type"
+    value = "gcs"
+  }
+
+  set {
+    name  = "checkpointStorage.bucket"
+    value = var.checkpoints_bucket_name
   }
 }
