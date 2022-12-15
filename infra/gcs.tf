@@ -1,12 +1,12 @@
 # https://registry.terraform.io/modules/terraform-google-modules/cloud-storage/google/latest
 
 module "bucket" {
-  source  = "terraform-google-modules/cloud-storage/google//modules/simple_bucket"
-  version = "~> 1.3"
-
-  name       = var.checkpoints_bucket_name
-  project_id = var.project_id
-  location   = var.region
+  source        = "terraform-google-modules/cloud-storage/google//modules/simple_bucket"
+  version       = "~> 1.3"
+  force_destroy = true
+  name          = var.checkpoints_bucket_name
+  project_id    = var.project_id
+  location      = var.region
 
   #   iam_members = [{
   #     role   = "roles/storage.objectViewer"
